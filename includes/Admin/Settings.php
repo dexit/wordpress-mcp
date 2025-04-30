@@ -21,6 +21,9 @@ class Settings {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'wp_ajax_wordpress_mcp_save_settings', array( $this, 'ajax_save_settings' ) );
+		
+		// Add settings link to the plugins page
+		add_filter( 'plugin_action_links_wordpress-mcp/wordpress-mcp.php', array( $this, 'add_settings_link' ) );
 	}
 
 	/**
@@ -34,6 +37,18 @@ class Settings {
 			'wordpress-mcp-settings',
 			array( $this, 'render_settings_page' )
 		);
+	}
+
+	/**
+	 * Add settings link to the plugins page.
+	 * 
+	 * @param array $links An array of plugin action links.
+	 * @return array Modified array of plugin action links.
+	 */
+	public function add_settings_link( array $links ): array {
+		$settings_link = '<a href="' . admin_url( 'options-general.php?page=wordpress-mcp-settings' ) . '">' . __( 'Settings', 'wordpress-mcp' ) . '</a>';
+		array_unshift( $links, $settings_link );
+		return $links;
 	}
 
 	/**
