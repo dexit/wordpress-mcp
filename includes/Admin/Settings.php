@@ -29,7 +29,7 @@ class Settings {
 	public function add_settings_page(): void {
 		add_options_page(
 			__( 'MCP Settings', 'wordpress-mcp' ),
-			__( 'MCP Settings', 'wordpress-mcp' ),
+			__( 'MCP', 'wordpress-mcp' ),
 			'manage_options',
 			'wordpress-mcp-settings',
 			array( $this, 'render_settings_page' )
@@ -87,6 +87,9 @@ class Settings {
 			$asset_file['version'],
 		);
 
+		// Check if the WP Feature API is available
+		$is_feature_api_available = function_exists( 'wp_feature_registry' );
+
 		// Localize the script with data needed by the React app.
 		wp_localize_script(
 			'wordpress-mcp-settings',
@@ -95,11 +98,12 @@ class Settings {
 				'apiUrl'   => rest_url( 'wordpress-mcp/v1/settings' ),
 				'nonce'    => wp_create_nonce( 'wordpress_mcp_settings' ),
 				'settings' => get_option( self::OPTION_NAME, array() ),
+				'isFeatureApiAvailable' => $is_feature_api_available,
 				'strings'  => array(
 					'enableMcp'                        => __( 'Enable MCP functionality', 'wordpress-mcp' ),
 					'enableMcpDescription'             => __( 'Toggle to enable or disable the MCP plugin functionality.', 'wordpress-mcp' ),
 					'enableFeaturesAdapter'            => __( 'Enable WordPress Features Adapter', 'wordpress-mcp' ),
-					'enableFeaturesAdapterDescription' => __( 'Enable or disable the WordPress Features Adapter. This option only works when MCP is enabled.', 'wordpress-mcp' ),
+					'enableFeaturesAdapterDescription' => __( 'Enable or disable the WordPress Features Adapter. Requires the WP Feature API plugin. This option only works when MCP is enabled.', 'wordpress-mcp' ),
 					'enableCreateTools'                => __( 'Enable Create Tools', 'wordpress-mcp' ),
 					'enableCreateToolsDescription'     => __( 'Allow create operations via tools.', 'wordpress-mcp' ),
 					'enableUpdateTools'                => __( 'Enable Update Tools', 'wordpress-mcp' ),

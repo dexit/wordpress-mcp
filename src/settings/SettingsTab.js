@@ -15,6 +15,9 @@ import { __ } from '@wordpress/i18n';
  * Settings Tab Component
  */
 const SettingsTab = ( { settings, onToggleChange, isSaving, strings } ) => {
+	// Get the feature API availability status from localized data
+	const isFeatureApiAvailable = window.wordpressMcpSettings?.isFeatureApiAvailable ?? false;
+
 	return (
 		<Card>
 			<CardHeader>
@@ -39,29 +42,32 @@ const SettingsTab = ( { settings, onToggleChange, isSaving, strings } ) => {
 					/>
 				</div>
 
-				<div className="setting-row">
-					<ToggleControl
-						label={
-							strings.enableFeaturesAdapter ||
-							__(
-								'Enable WordPress Features Adapter',
-								'wordpress-mcp'
-							)
-						}
-						help={
-							strings.enableFeaturesAdapterDescription ||
-							__(
-								'Enable or disable the WordPress Features Adapter. This option only works when MCP is enabled.',
-								'wordpress-mcp'
-							)
-						}
-						checked={ settings.features_adapter_enabled }
-						onChange={ () =>
-							onToggleChange( 'features_adapter_enabled' )
-						}
-						disabled={ ! settings.enabled }
-					/>
-				</div>
+				{/* Conditionally render the Features Adapter toggle */}
+				{ isFeatureApiAvailable && (
+					<div className="setting-row">
+						<ToggleControl
+							label={
+								strings.enableFeaturesAdapter ||
+								__(
+									'Enable WordPress Features Adapter',
+									'wordpress-mcp'
+								)
+							}
+							help={
+								strings.enableFeaturesAdapterDescription ||
+								__(
+									'Enable or disable the WordPress Features Adapter. Requires the WP Feature API plugin. This option only works when MCP is enabled.',
+									'wordpress-mcp'
+								)
+							}
+							checked={ settings.features_adapter_enabled }
+							onChange={ () =>
+								onToggleChange( 'features_adapter_enabled' )
+							}
+							disabled={ ! settings.enabled }
+						/>
+					</div>
+				) }
 
 				<div className="setting-row">
 					<ToggleControl
